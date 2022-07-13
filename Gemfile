@@ -4,5 +4,6 @@ source "https://rubygems.org"
 gem "sinatra"
 gem "webrick"
 gem "sqlite3"
+gem "activerecord"
 
 # gem "rails"

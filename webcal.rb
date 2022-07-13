@@ -1,6 +1,14 @@
 require 'sinatra'
+require 'active_record'
 
 set :environment, :production
+
+ActiveRecord::Base.configurations = YAML.load_file('database.yml')
+ActiveRecord::Base.establish_connection :development
+
+class Holiday < ActiveRecord::Base
+  self.table_name = 'holidays'
+end
 
 def redirectToday()
   today = Time.now
@@ -101,20 +109,27 @@ get '/:y/:m' do
   @rainen = @year + 1
   @sakunen = @year - 1
 
-
   @t = "<table border>"
   @t = @t + "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>"
   @t = @t + "<th>Thu</th><th>Fri</th><th>Sat</th></tr>"
 
   l = getLastDay(@year, @month)
-  h = zeller(@year, @month, 1)
+  zh = zeller(@year, @month, 1)
 
+  # 休日をDBから読み込む
+  hol = Holiday.all
+  holiday = Array.new(16){Array.new(2, 0)}
+  hol.each_with_index do |c, i|
+    holiday[i][0] = (c.date).split("-")[0].to_i
+    holiday[i][1] = (c.date).split("-")[1].to_i
+  end
+
+  monholiday_flag = 0
   d = 1
-
   6.times do |p|
     @t = @t + "<tr>"
     7.times do |q|
-      if p == 0 && q < h
+      if p == 0 && q < zh
         @t = @t + "<td></td>"
       else
         if d <= l
@@ -126,11 +141,35 @@ get '/:y/:m' do
             color = "black"
           end
 
-          today = Time.now
-          if @year == today.year && @month == today.month && d == today.day
-            @t = @t + "<td id=\"today\" align=\"right\"><font color=\"purple\"><strong>#{d}</strong></font></td>"
+          if monholiday_flag == 1
+            @t = @t + "<td id=\"monholiday\" align=\"right\">#{d}</td>"
+            monholiday_flag = 0
           else
-            @t = @t + "<td align=\"right\"><font color=\"#{color}\">#{d}</font></td>"
+            holiday_flag = 0
+            holiday.each do |h|
+              hday_m = h[0] # month
+              hday_d = h[1] # day
+              if @month == hday_m && d == hday_d && whatDay(zh, d) == 0
+                monholiday_flag = 1
+              end
+              if @month == hday_m && d == hday_d
+                if whatDay(zh, d) == 6 #saturday
+                  @t = @t + "<td id=\"satholiday\" align=\"right\">#{d}</td>"
+                elsif whatDay(zh, d) == 0 #sunday
+                  @t = @t + "<td id=\"sunholiday\" align=\"right\">#{d}</td>"
+                else
+                  @t = @t + "<td id=\"holiday\" align=\"right\">#{d}</td>"
+                end
+                holiday_flag = 1
+              end
+            end
+
+            today = Time.now
+            if @year == today.year && @month == today.month && d == today.day
+              @t = @t + "<td id=\"today\" align=\"right\"><strong>#{d}</strong></td>"
+            elsif holiday_flag != 1
+              @t = @t + "<td align=\"right\"><font color=\"#{color}\">#{d}</font></td>"
+            end
           end
           d += 1
         else
@@ -181,4 +220,8 @@ def zeller(y, m, d)
   end
   h = y + y/4 - y/100 + y/400 + (13*m + 8)/5 + d
   return h % 7
+end
+
+def whatDay(zh, d)
+  return (zh + d - 1) % 7
 end

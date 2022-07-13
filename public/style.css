@@ -1,3 +1,22 @@
 td#today {
-    background-color: #C0C0C0;
+    background-color: yellow;
+}
+
+td#holiday {
+    background-color: #f08080;
+}
+
+td#satholiday {
+    background-color: #f08080;
+    color: blue;
+}
+
+td#sunholiday {
+    background-color: #f08080;
+    color: red;
+}
+
+td#monholiday {
+    background-color: #98fb98;
+    color: black;
 }
