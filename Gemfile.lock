@@ -1,6 +1,20 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (7.0.3)
+      activesupport (= 7.0.3)
+    activerecord (7.0.3)
+      activemodel (= 7.0.3)
+      activesupport (= 7.0.3)
+    activesupport (7.0.3)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+    concurrent-ruby (1.1.10)
+    i18n (1.11.0)
+      concurrent-ruby (~> 1.0)
+    minitest (5.16.2)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     rack (2.2.3.1)
@@ -14,12 +28,15 @@ GEM
       tilt (~> 2.0)
     sqlite3 (1.4.4)
     tilt (2.0.10)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
     webrick (1.7.0)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord
   sinatra
   sqlite3
   webrick
