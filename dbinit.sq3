@@ -1,0 +1,21 @@
+create table holidays (
+  id integer primary key,
+  date varchar(30)
+);
+
+insert into holidays values (0, '1-1');
+insert into holidays values (1, '1-10');
+insert into holidays values (2, '2-11');
+insert into holidays values (3, '2-23');
+insert into holidays values (4, '3-21');
+insert into holidays values (5, '4-29');
+insert into holidays values (6, '5-3');
+insert into holidays values (7, '5-4');
+insert into holidays values (8, '5-5');
+insert into holidays values (9, '7-18');
+insert into holidays values (10, '8-11');
+insert into holidays values (11, '9-19');
+insert into holidays values (12, '9-23');
+insert into holidays values (13, '10-10');
+insert into holidays values (14, '11-3');
+insert into holidays values (15, '11-23');
