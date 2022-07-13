@@ -11,12 +11,8 @@ class Holiday < ActiveRecord::Base
 end
 
 def redirectToday()
-  today = Time.now
-  y = today.year
-  m = today.month
-  redirect "http://127.0.0.1:9998/#{y}/#{m}"
+  redirect "http://127.0.0.1:9998/#{Time.now.year}/#{Time.now.month}"
 end
-
 
 get '/' do
   redirectToday()
