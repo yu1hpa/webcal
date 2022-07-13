@@ -1,6 +1,14 @@
 require 'sinatra'
+require 'active_record'
 
 set :environment, :production
+
+ActiveRecord::Base.configurations = YAML.load_file('database.yml')
+ActiveRecord::Base.establish_connection :development
+
+class Holiday < ActiveRecord::Base
+  self.table_name = 'holidays'
+end
 
 def redirectToday()
   today = Time.now
@@ -101,7 +109,6 @@ get '/:y/:m' do
   @rainen = @year + 1
   @sakunen = @year - 1
 
-
   @t = "<table border>"
   @t = @t + "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>"
   @t = @t + "<th>Thu</th><th>Fri</th><th>Sat</th></tr>"
@@ -109,8 +116,15 @@ get '/:y/:m' do
   l = getLastDay(@year, @month)
   h = zeller(@year, @month, 1)
 
-  d = 1
+  # 休日をDBから読み込む
+  hol = Holiday.all
+  holiday = Array.new(16){Array.new(2, 0)}
+  hol.each_with_index do |c, i|
+    holiday[i][0] = (c.date).split("-")[0].to_i
+    holiday[i][1] = (c.date).split("-")[1].to_i
+  end
 
+  d = 1
   6.times do |p|
     @t = @t + "<tr>"
     7.times do |q|
@@ -127,9 +141,16 @@ get '/:y/:m' do
           end
 
           today = Time.now
+          holiday_flag = 0
+          holiday.each do |h|
+            if @month == h[0] && d == h[1]
+              @t = @t + "<td id=\"holiday\" align=\"right\"><strong>#{d}</strong></td>"
+              holiday_flag = 1
+            end
+          end
           if @year == today.year && @month == today.month && d == today.day
-            @t = @t + "<td id=\"today\" align=\"right\"><font color=\"purple\"><strong>#{d}</strong></font></td>"
-          else
+            @t = @t + "<td id=\"today\" align=\"right\"><strong>#{d}</strong></td>"
+          elsif holiday_flag == 0
             @t = @t + "<td align=\"right\"><font color=\"#{color}\">#{d}</font></td>"
           end
           d += 1
