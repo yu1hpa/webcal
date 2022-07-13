@@ -44,32 +44,14 @@ get '/:y/:m' do
     end
   end
 
+  @y1, @m1 = sengetsu(y, m)
+  @y2, @m2 = raigetsu(y, m)
+
+  @rainen = y + 1
+  @sakunen = y - 1
+
   @year = y
   @month = m
-  if @year < 0 || @month < 0 || @month > 12
-    redirectToday()
-  end
-
-  @y1 = @year
-  @m1 = @month - 1
-  if @m1 == 0
-    @m1 = 12
-    @y1 = @y1 - 1
-  end
-
-  @y2 = @year
-  @m2 = @month + 1
-  if @m2 == 13
-    @m2 = 1
-    @y2 = @y2 + 1
-  end
-
-  @rainen = @year + 1
-  @sakunen = @year - 1
-
-  @t = "<table border>"
-  @t = @t + "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>"
-  @t = @t + "<th>Thu</th><th>Fri</th><th>Sat</th></tr>"
 
   l = getLastDay(@year, @month)
   zh = zeller(@year, @month, 1)
