@@ -11,107 +11,45 @@ class Holiday < ActiveRecord::Base
 end
 
 def redirectToday()
-  today = Time.now
-  y = today.year
-  m = today.month
-  redirect "http://127.0.0.1:9998/#{y}/#{m}"
+  redirect "http://127.0.0.1:9998/#{Time.now.year}/#{Time.now.month}"
 end
-
 
 get '/' do
   redirectToday()
 end
 
 get '/:y/:m' do
-  @nengo = ""
   #令和
   if params[:y].include?("R")
-    begin
-      paramy = Integer(params[:y][1, params[:y].length])
-      paramm = Integer(params[:m])
-    rescue
-      redirectToday()
-    end
-    if (paramy == 1 && paramm < 5) || paramy < 1
-      redirectToday()
-    else
-    @nengo = "（令和#{paramy}）"
-    y = 2018 + paramy
-    m = paramm
-    end
+    ry, rm = isValidNumber(params[:y], params[:m])
+    y, m, @nengo = reiwa(ry, rm)
 
   #平成
   elsif params[:y].include?("H")
-    begin
-      paramy = Integer(params[:y][1, params[:y].length])
-      paramm = Integer(params[:m])
-    rescue
-      redirectToday()
-    end
-    if (paramy == 31 && paramm > 4) || paramy < 1
-      redirectToday()
-    elsif paramy > 31
-      redirectToday()
-    end
-    @nengo = "（平成#{paramy}）"
-    y = 1988 + paramy
-    m = paramm
+    hy, hm = isValidNumber(params[:y], params[:m])
+    y, m, @nengo = heisei(hy, hm)
 
   #昭和
   elsif params[:y].include?("S")
-    begin
-      paramy = Integer(params[:y][1, params[:y].length])
-      paramm = Integer(params[:m])
-    rescue
-      redirectToday()
-    end
-    if (paramy == 1 && paramm < 12) || paramy < 1
-      redirectToday()
-    elsif paramy == 64 && paramm != 1
-      redirectToday()
-    elsif paramy > 64
-      redirectToday()
-    end
-    @nengo = "（昭和#{paramy}）"
-    y = 1925 + paramy
-    m = paramm
+    sy, sm = isValidNumber(params[:y], params[:m])
+    y, m, @nengo = showa(sy, sm)
 
-  #それ以外
   else
     begin
-      y = Integer(params[:y])
-      m = Integer(params[:m])
+      y, m = isValidNumber(params[:y], params[:m])
     rescue
       redirectToday()
     end
   end
+
+  @y1, @m1 = sengetsu(y, m)
+  @y2, @m2 = raigetsu(y, m)
+
+  @rainen = y + 1
+  @sakunen = y - 1
 
   @year = y
   @month = m
-  if @year < 0 || @month < 0 || @month > 12
-    redirectToday()
-  end
-
-  @y1 = @year
-  @m1 = @month - 1
-  if @m1 == 0
-    @m1 = 12
-    @y1 = @y1 - 1
-  end
-
-  @y2 = @year
-  @m2 = @month + 1
-  if @m2 == 13
-    @m2 = 1
-    @y2 = @y2 + 1
-  end
-
-  @rainen = @year + 1
-  @sakunen = @year - 1
-
-  @t = "<table border>"
-  @t = @t + "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>"
-  @t = @t + "<th>Thu</th><th>Fri</th><th>Sat</th></tr>"
 
   l = getLastDay(@year, @month)
   zh = zeller(@year, @month, 1)
@@ -124,8 +62,13 @@ get '/:y/:m' do
     holiday[i][1] = (c.date).split("-")[1].to_i
   end
 
-  monholiday_flag = 0
+  @t = "<table border>"
+  @t = @t + "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>"
+  @t = @t + "<th>Thu</th><th>Fri</th><th>Sat</th></tr>"
+
   d = 1
+  monholiday_flag = 0
+
   6.times do |p|
     @t = @t + "<tr>"
     7.times do |q|
@@ -224,4 +167,72 @@ end
 
 def whatDay(zh, d)
   return (zh + d - 1) % 7
+end
+
+def isValidNumber(y, m)
+  begin
+    if y.include?("S") || y.include?("H") || y.include?("R")
+      paramy = Integer(y[1, y.length])
+      paramm = Integer(m)
+    else
+      paramy = Integer(y)
+      paramm = Integer(m)
+    end
+    isValidYearMonth(paramy, paramm)
+    return paramy, paramm
+  rescue
+    redirectToday()
+  end
+end
+
+def isValidYearMonth(y, m)
+  if y < 0 || m < 0 || m > 12
+    redirectToday()
+  end
+end
+
+def sengetsu(y, m)
+  if m-1 == 0
+    return y - 1, 12
+  else
+    return y, m - 1
+  end
+end
+
+def raigetsu(y, m)
+  if m + 1 == 13
+    return y + 1, 1
+  else
+    return y, m + 1
+  end
+end
+
+def reiwa(y, m)
+  if (y == 1 && m < 5) || y < 1
+    redirectToday()
+  else
+    return 2018 + y, m, "（令和#{y}）"
+  end
+end
+
+def heisei(y, m)
+  if (y == 31 && m > 4) || y < 1
+    redirectToday()
+  elsif y > 31
+    redirectToday()
+  else
+    return 1988 + y, m, "（平成#{y}）"
+  end
+end
+
+def showa(y, m)
+  if (y == 1 && m < 12) || y < 1
+    redirectToday()
+  elsif y == 64 && m != 1
+    redirectToday()
+  elsif y > 64
+    redirectToday()
+  else
+    return 1925 + y, m, "（昭和#{y}）"
+  end
 end
