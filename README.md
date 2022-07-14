@@ -1,4 +1,5 @@
 # webcal
+![calender](./docs/calender.png)
 
 ## Overview
 Calender application with Sinatra
@@ -15,6 +16,8 @@ bundle install
 
 ## Feature
 - [x] Basic calender feature
+- [x] Apply yellow bg to today
+- [x] Add link to next (month|year) and last (month|year)
 - [x] Accept Gengo (S|H|R)\d URL parameter
 - [x] Don't Accept negative parameter
 - [x] Color Sunday red and Saturday blue
