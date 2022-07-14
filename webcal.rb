@@ -36,9 +36,7 @@ get '/:y/:m' do
 
   else
     begin
-      y = Integer(params[:y])
-      m = Integer(params[:m])
-      isValidYearMonth(y, m)
+      y, m = isValidNumber(params[:y], params[:m])
     rescue
       redirectToday()
     end
@@ -173,8 +171,14 @@ end
 
 def isValidNumber(y, m)
   begin
-    paramy = Integer(y[1, y.length])
-    paramm = Integer(m)
+    if y.include?("S") || y.include?("H") || y.include?("R")
+      paramy = Integer(y[1, y.length])
+      paramm = Integer(m)
+    else
+      paramy = Integer(y)
+      paramm = Integer(m)
+    end
+    isValidYearMonth(paramy, paramm)
     return paramy, paramm
   rescue
     redirectToday()
@@ -204,7 +208,6 @@ def raigetsu(y, m)
 end
 
 def reiwa(y, m)
-  isValidYearMonth(y, m)
   if (y == 1 && m < 5) || y < 1
     redirectToday()
   else
@@ -213,7 +216,6 @@ def reiwa(y, m)
 end
 
 def heisei(y, m)
-  isValidYearMonth(y, m)
   if (y == 31 && m > 4) || y < 1
     redirectToday()
   elsif y > 31
@@ -224,7 +226,6 @@ def heisei(y, m)
 end
 
 def showa(y, m)
-  isValidYearMonth(y, m)
   if (y == 1 && m < 12) || y < 1
     redirectToday()
   elsif y == 64 && m != 1
