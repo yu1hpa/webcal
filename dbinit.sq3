@@ -19,3 +19,10 @@ insert into holidays values (12, '9-23');
 insert into holidays values (13, '10-10');
 insert into holidays values (14, '11-3');
 insert into holidays values (15, '11-23');
+
+create table birthdays (
+  id integer primary key,
+  date date
+);
+
+insert into birthdays values (0, '2022-11-28');
