@@ -1,28 +1,32 @@
 create table holidays (
   id integer primary key,
-  date varchar(30)
+  date date,
+  desc varchar(50)
 );
 
-insert into holidays values (0, '1-1');
-insert into holidays values (1, '1-10');
-insert into holidays values (2, '2-11');
-insert into holidays values (3, '2-23');
-insert into holidays values (4, '3-21');
-insert into holidays values (5, '4-29');
-insert into holidays values (6, '5-3');
-insert into holidays values (7, '5-4');
-insert into holidays values (8, '5-5');
-insert into holidays values (9, '7-18');
-insert into holidays values (10, '8-11');
-insert into holidays values (11, '9-19');
-insert into holidays values (12, '9-23');
-insert into holidays values (13, '10-10');
-insert into holidays values (14, '11-3');
-insert into holidays values (15, '11-23');
+insert into holidays values (0, '2022-1-1', '元旦');
+insert into holidays values (1, '2022-1-10', '成人の日');
+insert into holidays values (2, '2022-2-11', '建国記念の日');
+insert into holidays values (3, '2022-2-23', '天皇誕生日');
+insert into holidays values (4, '2022-3-21', '春分の日');
+insert into holidays values (5, '2022-4-29', '昭和の日');
+insert into holidays values (6, '2022-5-3', '憲法記念日');
+insert into holidays values (7, '2022-5-4', 'みどりの日');
+insert into holidays values (8, '2022-5-5', 'こどもの日');
+insert into holidays values (9, '2022-7-18', '海の日');
+insert into holidays values (10, '2022-8-11', '山の日');
+insert into holidays values (11, '2022-9-19', '敬老の日');
+insert into holidays values (12, '2022-9-23', '秋分の日');
+insert into holidays values (13, '2022-10-10', 'スポーツの日');
+insert into holidays values (14, '2022-11-3', '文化の日');
+insert into holidays values (15, '2022-11-23', '勤労感謝の日');
 
 create table birthdays (
   id integer primary key,
-  date date
+  date date,
+  desc varchar(50)
 );
 
-insert into birthdays values (0, '2022-11-28');
+insert into birthdays values (0, '2022-11-28', 'Alice''s Birthday');
+insert into birthdays values (1, '2022-07-27', 'Bob''s Birthday');
+insert into birthdays values (2, '2022-07-26', 'Chris''s Birthday');
