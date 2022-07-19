@@ -60,10 +60,11 @@ get '/:y/:m' do
 
   # 休日をDBから読み込む
   hol = Holiday.all
-  holiday = Array.new(16){Array.new(2, 0)}
+  holiday = Array.new(hol.length){Array.new(0)}
   hol.each_with_index do |c, i|
-    holiday[i][0] = (c.date).split("-")[0].to_i
-    holiday[i][1] = (c.date).split("-")[1].to_i
+    holiday[i].push(Date.parse(c.date.to_s).mon)
+    holiday[i].push(Date.parse(c.date.to_s).day)
+    holiday[i].push(c.desc)
   end
 
   bir = Birthday.all
@@ -104,16 +105,26 @@ get '/:y/:m' do
             holiday.each do |h|
               hday_m = h[0] # month
               hday_d = h[1] # day
+              hdesc = h[2] # description
               if @month == hday_m && d == hday_d && whatDay(zh, d) == 0
                 monholiday_flag = 1
               end
               if @month == hday_m && d == hday_d
                 if whatDay(zh, d) == 6 #saturday
-                  @t = @t + "<td id=\"satholiday\" align=\"right\">#{d}</td>"
+                  @t = @t + "<td class=\"tooltip\" id=\"satholiday\" align=\"right\">
+                              <span class=\"tooltip-text\">#{hdesc}</span>
+                                #{d}
+                             </td>"
                 elsif whatDay(zh, d) == 0 #sunday
-                  @t = @t + "<td id=\"sunholiday\" align=\"right\">#{d}</td>"
+                  @t = @t + "<td class=\"tooltip\" id=\"sunholiday\" align=\"right\">
+                              <span class=\"tooltip-text\">#{hdesc}</span>
+                                #{d}
+                             </td>"
                 else
-                  @t = @t + "<td id=\"holiday\" align=\"right\">#{d}</td>"
+                  @t = @t + "<td class=\"tooltip\" id=\"holiday\" align=\"right\">
+                              <span class=\"tooltip-text\">#{hdesc}</span>
+                                #{d}
+                             </td>"
                 end
                 holiday_flag = 1
               end
@@ -121,13 +132,25 @@ get '/:y/:m' do
 
             birthday_flag = 0
             birthday.each do |b|
-              if @month == b[0] && d == b[1]
+              bday_m = b[0] #month
+              bday_d = b[1] #day
+              bdesc = b[2] #description
+              if @month == bday_m && d == bday_d
                 if whatDay(zh, d) == 6 #saturday
-                  @t = @t + "<td id=\"satbday\" align=\"right\">#{d}</td>"
+                  @t = @t + "<td class=\"tooltip\" id=\"satbday\" align=\"right\">
+                              <span class=\"tooltip-text\">#{bdesc}</span>
+                                #{d}
+                             </td>"
                 elsif whatDay(zh, d) == 0 #sunday
-                  @t = @t + "<td id=\"sunbday\" align=\"right\">#{d}</td>"
+                  @t = @t + "<td class=\"tooltip\" id=\"sunbday\" align=\"right\">
+                              <span class=\"tooltip-text\">#{bdesc}</span>
+                                #{d}
+                             </td>"
                 else
-                  @t = @t + "<td class=\"tooltip\" id=\"bday\" align=\"right\"><span class=\"tooltip-text\">#{b[2]}</span>#{d}</td>"
+                  @t = @t + "<td class=\"tooltip\" id=\"bday\" align=\"right\">
+                              <span class=\"tooltip-text\">#{bdesc}</span>
+                                #{d}
+                             </td>"
                 end
                 birthday_flag = 1
               end
