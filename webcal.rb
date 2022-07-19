@@ -67,11 +67,11 @@ get '/:y/:m' do
   end
 
   bir = Birthday.all
-  birthday = Array.new(3){Array.new(3)}
+  birthday = Array.new(bir.length){Array.new(0)}
   bir.each_with_index do |b, i|
-    birthday[i][0] = Date.parse(b.date.to_s).mon
-    birthday[i][1] = Date.parse(b.date.to_s).day
-    birthday[i][2] = b.desc
+    birthday[i].push(Date.parse(b.date.to_s).mon)
+    birthday[i].push(Date.parse(b.date.to_s).day)
+    birthday[i].push(b.desc)
   end
 
   @t = "<table border>"
