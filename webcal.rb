@@ -67,10 +67,11 @@ get '/:y/:m' do
   end
 
   bir = Birthday.all
-  birthday = Array.new(1){Array.new(2, Date.new())}
+  birthday = Array.new(3){Array.new(3)}
   bir.each_with_index do |b, i|
     birthday[i][0] = Date.parse(b.date.to_s).mon
     birthday[i][1] = Date.parse(b.date.to_s).day
+    birthday[i][2] = b.desc
   end
 
   @t = "<table border>"
@@ -126,7 +127,7 @@ get '/:y/:m' do
                 elsif whatDay(zh, d) == 0 #sunday
                   @t = @t + "<td id=\"sunbday\" align=\"right\">#{d}</td>"
                 else
-                  @t = @t + "<td id=\"bday\" align=\"right\">#{d}</td>"
+                  @t = @t + "<td class=\"tooltip\" id=\"bday\" align=\"right\"><span class=\"tooltip-text\">#{b[2]}</span>#{d}</td>"
                 end
                 birthday_flag = 1
               end
