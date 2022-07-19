@@ -10,6 +10,10 @@ class Holiday < ActiveRecord::Base
   self.table_name = 'holidays'
 end
 
+class Birthday < ActiveRecord::Base
+  self.table_name = 'birthdays'
+end
+
 def redirectToday()
   redirect "http://127.0.0.1:9998/#{Time.now.year}/#{Time.now.month}"
 end
@@ -62,6 +66,13 @@ get '/:y/:m' do
     holiday[i][1] = (c.date).split("-")[1].to_i
   end
 
+  bir = Birthday.all
+  birthday = Array.new(1){Array.new(2, Date.new())}
+  bir.each_with_index do |b, i|
+    birthday[i][0] = Date.parse(b.date.to_s).mon
+    birthday[i][1] = Date.parse(b.date.to_s).day
+  end
+
   @t = "<table border>"
   @t = @t + "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>"
   @t = @t + "<th>Thu</th><th>Fri</th><th>Sat</th></tr>"
@@ -107,10 +118,24 @@ get '/:y/:m' do
               end
             end
 
+            birthday_flag = 0
+            birthday.each do |b|
+              if @month == b[0] && d == b[1]
+                if whatDay(zh, d) == 6 #saturday
+                  @t = @t + "<td id=\"satbday\" align=\"right\">#{d}</td>"
+                elsif whatDay(zh, d) == 0 #sunday
+                  @t = @t + "<td id=\"sunbday\" align=\"right\">#{d}</td>"
+                else
+                  @t = @t + "<td id=\"bday\" align=\"right\">#{d}</td>"
+                end
+                birthday_flag = 1
+              end
+            end
+
             today = Time.now
             if @year == today.year && @month == today.month && d == today.day
               @t = @t + "<td id=\"today\" align=\"right\"><strong>#{d}</strong></td>"
-            elsif holiday_flag != 1
+            elsif holiday_flag != 1 && birthday_flag != 1
               @t = @t + "<td align=\"right\"><font color=\"#{color}\">#{d}</font></td>"
             end
           end

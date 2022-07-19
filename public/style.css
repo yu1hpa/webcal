@@ -20,3 +20,17 @@ td#monholiday {
     background-color: #98fb98;
     color: black;
 }
+
+td#bday {
+    background-color: #dda0dd;
+}
+
+td#satbday {
+    background-color: #dda0dd;
+    color: blue;
+}
+
+td#sunbday {
+    background-color: #dda0dd;
+    color: red;
+}
