@@ -58,6 +58,19 @@ get '/:y/:m' do
   l = getLastDay(@year, @month)
   zh = zeller(@year, @month, 1)
 
+  seijinnohi = seijinDate(@year)
+  uminohi = umiDate(@year)
+
+  if Holiday.exists?(desc: '成人の日')
+    Holiday.find_by(desc: '成人の日').destroy
+  end
+  if Holiday.exists?(desc: '海の日')
+    Holiday.find_by(desc: '海の日').destroy
+  end
+
+  Holiday.create(date: seijinnohi, desc: '成人の日')
+  Holiday.create(date: uminohi, desc: '海の日')
+
   # 休日をDBから読み込む
   hol = Holiday.all
   holiday = Array.new(hol.length){Array.new(0)}
@@ -284,4 +297,22 @@ def showa(y, m)
   else
     return 1925 + y, m, "（昭和#{y}）"
   end
+end
+
+def seijinDate(year)
+  seijin_day = 0
+  seijin_zh = zeller(year, 1, 1)
+  if seijin_zh == 1
+    seijin_day = 8
+  else
+    seijin_day = 16 - seijin_zh
+  end
+  return Date.parse("%d-%02d-%02d" % [year, 1, seijin_day])
+end
+
+def umiDate(year)
+  umi_day = 0
+  umi_zh = zeller(year, 7, 1)
+  umi_day = 23 - umi_zh
+  return Date.parse("%d-%02d-%02d" % [year, 7, umi_day])
 end
