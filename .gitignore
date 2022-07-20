@@ -30,4 +30,4 @@ manifest.yml
 .Spotlight-V100
 .Trashes
 
-webcal.db
+*.db
